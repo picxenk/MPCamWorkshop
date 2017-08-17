@@ -1,0 +1,16 @@
+var config = {};
+config.MPCamID = 0;
+config.camWidth = 864; //480, 640, 864, 960, 1920
+config.camHeight = 486; //270, 360, 486, 540, 1080
+
+config.camOptions = ["-rot", "90", 
+	"-w", config.camWidth, "-h", config.camHeight, 
+	"-q", "100", "-t", "250",
+	"-o"] 
+
+config.previewOptions = ["-rot", "90", 
+	"-w", 320, "-h", 480, 
+	"-q", "30", "-t", "1", "-ex", "sports",
+	"-o", "public_html/preview.jpg"] 
+
+module.exports = config;
