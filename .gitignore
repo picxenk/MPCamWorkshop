@@ -59,6 +59,8 @@ typings/
 
 # MetaPixelCamera ignore
 config.js
+render.js
 *.jpg
+public_html/shot/
 *.png
 *.jpg~

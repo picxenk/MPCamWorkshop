@@ -13,12 +13,15 @@ var scpOptions = [config.MPScreenServerUser+"@"
     +config.MPScreenServerIP+":"
     +"./MPScreenServer/MPCams/"
     +config.MPCamID+"/"];
-
+var shotDir = 'public_html/shot';
+var shotNum = 0;
 
 // common
 var spawn = require('child_process').spawn;
+var exec  = require('child_process').exec;
 var dateFormat = require('dateformat');
 var path = require('path');
+var fs = require('fs');
 
 
 // for buttons & LED
@@ -33,7 +36,10 @@ led.writeSync(1);
 // blink = setInterval(function() {
 //     led.writeSync(led.readSync() ^ 1);
 // }, 50);
-
+fs.readdir(shotDir, (err, items) => {
+    shotNum = items.length;
+    console.log('current shot number : ' + shotNum);
+});
 
 button.watch(function(err, value) {
     var fileName;
@@ -82,13 +88,25 @@ button.watch(function(err, value) {
         shotProc = spawn('raspistill', camOptions.concat(filePath));
         console.log('cam done '+filePath);
         shotProc.on('exit', (code) => {
-            var mpProc = spawn('node', [path.join(__dirname, 'renderMPCanvas.js'), fileName]);
-            mpProc.on('exit', (code) => {
-                isProcessing = false;
-                console.log('renderMP done '+mpFileName);
+            shotNum++;
+            var newShotDir = shotDir + '/' + shotNum; 
+            exec('mkdir '+newShotDir+';cat renderMP1.js renderCode.js renderMP2.js > render.js', (err, sto, ste) => {
 
-                clearInterval(blink);
-                led.writeSync(1);
+                if (err) {
+                    console.error(`${err}`);
+                    return;
+                }
+                exec('cp '+filePath+' '+newShotDir+'/ori.png');
+
+                var mpProc = spawn('node', [path.join(__dirname, 'render.js'), fileName]);
+                mpProc.on('exit', (code) => {
+                    isProcessing = false;
+                    console.log('renderMP done '+mpFileName);
+                    exec('cp '+mpFilePath+' '+newShotDir+'/mp.png');
+                    exec('cp renderCode.js '+newShotDir+'/code.txt');
+                    clearInterval(blink);
+                    led.writeSync(1);
+                });
             });
         });
     }
