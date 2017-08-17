@@ -21,11 +21,18 @@ var dateFormat = require('dateformat');
 var path = require('path');
 
 
-// for buttons
+// for buttons & LED
 var Gpio = require('onoff').Gpio;
 var buttonOptions = { debounceTimeout: 30};
 var button = new Gpio(5, 'in', 'both', buttonOptions); // for shotting
 var button2 = new Gpio(6, 'in', 'both', buttonOptions); // for extra
+var led = new Gpio(21, 'out');
+var blink;
+
+led.writeSync(1);
+// blink = setInterval(function() {
+//     led.writeSync(led.readSync() ^ 1);
+// }, 50);
 
 
 button.watch(function(err, value) {
@@ -46,6 +53,11 @@ button.watch(function(err, value) {
         oButtonValue = 1;
     }
 
+    // if (state == 'READY') {
+    //     clearInterval(blink);
+    //     led.writeSync(1);
+    // }
+
 
     console.log(value);
     debug();
@@ -53,6 +65,11 @@ button.watch(function(err, value) {
     
     if (state == 'SHOT' && !isProcessing) {
         console.log('==================================CHAL');
+
+        blink = setInterval(function() {
+            led.writeSync(led.readSync() ^ 1);
+        }, 100);
+
         isShutterOpen = true;
         isProcessing = true;
 
@@ -67,8 +84,11 @@ button.watch(function(err, value) {
         shotProc.on('exit', (code) => {
             var mpProc = spawn('node', [path.join(__dirname, 'renderMPCanvas.js'), fileName]);
             mpProc.on('exit', (code) => {
-                    isProcessing = false;
-                });
+                isProcessing = false;
+                console.log('renderMP done '+mpFileName);
+
+                clearInterval(blink);
+                led.writeSync(1);
             });
         });
     }
@@ -80,6 +100,7 @@ button.watch(function(err, value) {
         }
         oButtonValue = -1;
         state = 'READY';
+
     }
 
 });
@@ -96,6 +117,7 @@ button2.watch(function(err, value) {
 process.on('SIGINT', function() {
     button.unexport();
     button2.unexport();
+    led.unexport();
 });
 
 
