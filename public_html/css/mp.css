@@ -1,0 +1,45 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto Mono';
+}
+
+#nav {
+    position: relative;
+    top: 0px;
+}
+
+#shot {
+    position: relative;
+    width: 1240px;
+    height: 420px;
+    background: #000;
+    top: 10px;
+    left: 0px;
+padding: 0px;
+margin: 0px;
+}
+
+
+#ori {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+#code {
+    position: absolute;
+    left: 420px;
+    height: 380px;
+    width: 380px;
+    background: #fff;
+    top: 10px;
+    padding: 10px;
+    font-size: 16px;
+}
+
+#mpi {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
