@@ -90,7 +90,7 @@ button.watch(function(err, value) {
         shotProc.on('exit', (code) => {
             shotNum++;
             var newShotDir = shotDir + '/' + shotNum; 
-            exec('mkdir '+newShotDir+';cat renderMP1.js renderCode.js renderMP2.js > render.js', (err, sto, ste) => {
+            exec('mkdir '+newShotDir+';cat renderMP1.js code.js renderMP2.js > render.js', (err, sto, ste) => {
 
                 if (err) {
                     console.error(`${err}`);
@@ -103,7 +103,7 @@ button.watch(function(err, value) {
                     isProcessing = false;
                     console.log('renderMP done '+mpFileName);
                     exec('cp '+mpFilePath+' '+newShotDir+'/mp.png');
-                    exec('cp renderCode.js '+newShotDir+'/code.txt');
+                    exec('cp code.js '+newShotDir+'/code.txt');
                     clearInterval(blink);
                     led.writeSync(1);
                 });
