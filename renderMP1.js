@@ -62,6 +62,7 @@ for (var i=0; i<w; i++) {
         var x = i;
         var y = j;
         var mp = new MetaPixel(i, j, r, g, b, a);
+        var 픽셀 = mp;
         var 픽셀은 = mp;
         var 픽셀의 = mp;
         var 픽셀이여 = mp;

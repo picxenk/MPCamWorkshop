@@ -1,5 +1,5 @@
 if (pixel.r > pixel.b) {
-    pixel.moveLeft(pixel.r*0.2)
+      pixel.moveLeft(r*0.3)
 } else {
-    pixel.moveRight(pixel.b*0.2)
+      pixel.moveRight(b*0.3)
 }

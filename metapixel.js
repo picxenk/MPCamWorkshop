@@ -126,6 +126,11 @@ var MetaPixel = function(px, py, pr, pg, pb, pa) {
     this.흩어져라 = function() {
         this.moveRandom(this.r*0.5);
     }
+
+
+    this.붉은만큼흘러내린다 = function() {
+      this.moveDown(this.r*0.5)
+    }
 // ---------------------------------------- END
 }
 
