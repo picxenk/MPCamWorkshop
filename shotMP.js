@@ -24,6 +24,10 @@ var path = require('path');
 var fs = require('fs');
 
 
+// sound trigger
+var player = require('play-sound')(opts={});
+var soundFile = 'shot1.wav';
+
 // for buttons & LED
 var Gpio = require('onoff').Gpio;
 var buttonOptions = { debounceTimeout: 30};
@@ -71,6 +75,9 @@ button.watch(function(err, value) {
     
     if (state == 'SHOT' && !isProcessing) {
         console.log('==================================CHAL');
+        player.play(soundFile, function(err) {
+            if (err) throw err;
+        });
 
         blink = setInterval(function() {
             led.writeSync(led.readSync() ^ 1);
