@@ -1,9 +1,9 @@
 var config = {};
 config.MPCamID = 0;
-config.camWidth = 500; //480, 640, 864, 960, 1920
-config.camHeight = 500; //270, 360, 486, 540, 1080
+config.camWidth = 400; //480, 640, 864, 960, 1920
+config.camHeight = 400; //270, 360, 486, 540, 1080
 
-config.camOptions = [ 
+config.camOptions = ["-rot", "270", 
 	"-w", config.camWidth, "-h", config.camHeight, 
 	"-q", "100", "-t", "250",
     "-br", "60",
