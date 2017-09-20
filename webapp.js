@@ -4,28 +4,43 @@ var bodyParser = require('body-parser');
 var fs = require('fs');
 var shotDir = 'public_html/shot';
 
+var indexContent = '';
+var itemContent = '';
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.get('/', (req, res) => {
-    fs.readFile('public_html/index.html', (err, content) => {
-        fs.readdir(shotDir, (err, items) => {
-            var links = '[';
-            for (var i=0; i<items.length; i++) {
-                var n = i+1;
-                links += ' <a href="/'+n+'">'+n+'</a> ';
-            }
-            links += ']';
-            var result = content.toString().replace('#NAV#', links);
-            // var result = links;
-            res.send(result);
-        });
+    fs.readdir(shotDir, (err, items) => {
+        var links = '[';
+        for (var i=0; i<items.length; i++) {
+            var n = i+1;
+            links += ' <a href="/'+n+'">'+n+'</a> ';
+        }
+        links += ']';
+        var result = indexContent.toString().replace('#NAV#', links);
+        // var result = links;
+        res.send(result);
     });
 });
+// app.get('/', (req, res) => {
+//     fs.readFile('public_html/index.html', (err, content) => {
+//         fs.readdir(shotDir, (err, items) => {
+//             var links = '[';
+//             for (var i=0; i<items.length; i++) {
+//                 var n = i+1;
+//                 links += ' <a href="/'+n+'">'+n+'</a> ';
+//             }
+//             links += ']';
+//             var result = content.toString().replace('#NAV#', links);
+//             // var result = links;
+//             res.send(result);
+//         });
+//     });
+// });
 
 
 app.get('/:id', (req, res) =>  {
-    fs.readFile('public_html/item.html', (err, content) => {
         fs.readdir(shotDir, (err, items) => {
             var links = '[';
             for (var i=0; i<items.length; i++) {
@@ -33,7 +48,7 @@ app.get('/:id', (req, res) =>  {
                 links += ' <a href="/'+n+'">'+n+'</a> ';
             }
             links += ']';
-            var result = content.toString().replace('#NAV#', links);
+            var result = itemContent.toString().replace('#NAV#', links);
 
             var id = req.params.id;
             var oriImage = '<img src="/shot/'+id+'/ori.png" width="400"/>';
@@ -48,11 +63,16 @@ app.get('/:id', (req, res) =>  {
                 res.send(result);
             });
         });
-    });
 });
 
 
 app.use(express.static('public_html'));
 app.listen(80, () => {
     console.log('running...');
+    fs.readFile('public_html/index.html', (err, content) => {
+        indexContent = content;
+    });
+    fs.readFile('public_html/item.html', (err, content) => {
+        itemContent = content;
+    });
 });
