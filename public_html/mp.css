@@ -1,5 +1,5 @@
 html, body {
-    margin: 0;
+    margin: 20px;
     padding: 0;
     font-family: 'Roboto Mono';
 }
@@ -41,3 +41,4 @@ html, body {
     top: 10px;
     right: 10px;
 }
+
