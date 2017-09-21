@@ -10,6 +10,7 @@ var cButtonBValue = -1;
 var isProcessing = false;
 var isShutterOpen = false;
 var isDebugging = true;
+var trigger = [];
 
 var camOptions = config.camOptions;
 var scpOptions = [config.MPScreenServerUser+"@"
@@ -27,9 +28,11 @@ var path = require('path');
 var fs = require('fs');
 
 
-// sound trigger
+// sound 
 var player = require('play-sound')(opts={});
 var soundFile = 'shot1.wav';
+var soundA = 'buttonA.wav';
+var soundB = 'buttonB.wav';
 
 
 // for buttons & LED
@@ -50,12 +53,15 @@ fs.readdir(shotDir, (err, items) => {
 });
 
 
+var test = 1;
 button.watch(function(err, value) {
     if(err) {
         throw err;
     }
     console.log('buttonA: '+value);
-    debug();
+    // debug();
+    
+
 
     cButtonAValue = value;
     if (stateA == 'READY' && oButtonAValue == -1 && cButtonAValue == 0) {
@@ -65,11 +71,23 @@ button.watch(function(err, value) {
     if (stateA == 'SHOT' && oButtonAValue == 0 && cButtonAValue == 1) {
         stateA = 'RELEASE';
         oButtonAValue = 1;
+        if (config.mode == 1) {
+            addTriggerPattern(1);
+            player.play(soundA, function(err) {
+                if (err) throw err;
+            });
+            if (checkTrigger()) {
+                processMPCam();
+            }
+        }
+
     }
-    
+
     if (stateA == 'SHOT' && !isProcessing) {
         console.log('==================================CHAL');
-        processMPCam();
+        if(config.mode == 0) {
+            processMPCam();
+        }
     }
 
     if (stateA == 'RELEASE') {
@@ -88,7 +106,7 @@ button2.watch(function(err, value) {
         throw err;
     }
     console.log('buttonB: '+value);
-    debug();
+    // debug();
 
     cButtonBValue = value;
     if (stateB == 'READY' && oButtonBValue == -1 && cButtonBValue == 0) {
@@ -98,11 +116,22 @@ button2.watch(function(err, value) {
     if (stateB == 'SHOT' && oButtonBValue == 0 && cButtonBValue == 1) {
         stateB = 'RELEASE';
         oButtonBValue = 1;
+        if (config.mode == 1) {
+            addTriggerPattern(2);
+            player.play(soundB, function(err) {
+                if (err) throw err;
+            });
+            if (checkTrigger()) {
+                processMPCam();
+            }
+        }
     }
     
     if (stateB == 'SHOT' && !isProcessing) {
         console.log('==================================CHAL');
-        processMPCam();
+        if(config.mode == 0) {
+            processMPCam();
+        }
     }
 
     if (stateB == 'RELEASE') {
@@ -160,6 +189,7 @@ var processMPCam = function() {
             var mpProc = spawn('node', [path.join(__dirname, 'render.js'), fileName]);
             mpProc.on('exit', (code) => {
                 isProcessing = false;
+                trigger = [];
                 console.log('renderMP done '+mpFileName);
                 exec('cp '+mpFilePath+' '+newShotDir+'/mp.png');
                 exec('cp code.js '+newShotDir+'/code.txt');
@@ -170,6 +200,24 @@ var processMPCam = function() {
     });
 }
 
+var addTriggerPattern = function(id) {
+    if (trigger.length >= config.trigger.length) {
+        trigger = [id];
+    } else {
+        trigger.push(id);
+    }
+}
+
+var checkTrigger = function() {
+    console.log('[trigger] : '+trigger);
+    var pattern = config.trigger.toString();
+    var buttonPattern = trigger.toString();
+    if (pattern === buttonPattern) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 var makeTimeString = function() {
     return dateFormat(new Date(), "yyyymmdd-HH_MM_ssl");
