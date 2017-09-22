@@ -1,17 +1,16 @@
 var config = {};
+config.mode = 0; // 0 or 1, mode 1 need to set trigger pattern
+config.trigger = [1, 2, 1]; 
+
 config.MPCamID = 0;
 config.camWidth = 400; //480, 640, 864, 960, 1920
 config.camHeight = 400; //270, 360, 486, 540, 1080
 
-config.camOptions = ["-rot", "270", 
+config.camOptions = ["-rot", "270",
 	"-w", config.camWidth, "-h", config.camHeight, 
 	"-q", "100", "-t", "250",
     "-br", "60",
 	"-o"] 
 
-config.previewOptions = ["-rot", "90", 
-	"-w", 320, "-h", 480, 
-	"-q", "30", "-t", "1", "-ex", "sports",
-	"-o", "public_html/preview.jpg"] 
 
 module.exports = config;
