@@ -33,13 +33,16 @@ var player = require('play-sound')(opts={});
 var soundFile = 'shot1.wav';
 var soundA = 'buttonA.wav';
 var soundB = 'buttonB.wav';
+var soundX = 'wrong.wav';
 
 
 // for buttons & LED
 var Gpio = require('onoff').Gpio;
-var buttonOptions = { debounceTimeout: 30};
+var buttonOptions = { debounceTimeout: 6};
 var button = new Gpio(5, 'in', 'both', buttonOptions); // for shotting
 var button2 = new Gpio(6, 'in', 'both', buttonOptions); // for extra
+// var button = new Gpio(5, 'in', 'both'); // for shotting
+// var button2 = new Gpio(6, 'in', 'both'); // for extra
 var led = new Gpio(21, 'out');
 var blink;
 
@@ -76,8 +79,12 @@ button.watch(function(err, value) {
             player.play(soundA, function(err) {
                 if (err) throw err;
             });
-            if (checkTrigger()) {
+            if (checkTrigger() == 'match') {
                 processMPCam();
+            } else if (checkTrigger() == 'unmatch') {
+                player.play(soundX, function(err) {
+                    if (err) throw err;
+                });
             }
         }
 
@@ -121,8 +128,12 @@ button2.watch(function(err, value) {
             player.play(soundB, function(err) {
                 if (err) throw err;
             });
-            if (checkTrigger()) {
+            if (checkTrigger() == 'match') {
                 processMPCam();
+            } else if (checkTrigger() == 'unmatch') {
+                player.play(soundX, function(err) {
+                    if (err) throw err;
+                });
             }
         }
     }
@@ -202,6 +213,9 @@ var processMPCam = function() {
 
 var addTriggerPattern = function(id) {
     if (trigger.length >= config.trigger.length) {
+        // player.play(soundX, function(err) {
+        //     if (err) throw err;
+        // });
         trigger = [id];
     } else {
         trigger.push(id);
@@ -212,8 +226,12 @@ var checkTrigger = function() {
     console.log('[trigger] : '+trigger);
     var pattern = config.trigger.toString();
     var buttonPattern = trigger.toString();
-    if (pattern === buttonPattern) {
-        return true;
+    if (trigger.length >= config.trigger.length) {
+        if (pattern === buttonPattern) {
+            return 'match';
+        } else {
+            return 'unmatch';
+        }
     } else {
         return false;
     }
